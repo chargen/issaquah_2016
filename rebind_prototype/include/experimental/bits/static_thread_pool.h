@@ -88,6 +88,18 @@ class static_thread_pool
       return *this;
     }
 
+    // Return current value of property if supported.
+    template<class Property> auto property(const Property& p) const
+      -> typename std::enable_if<std::is_same<executor_impl, decltype(this->require(p))>::value, Property>::type
+    {
+      return p;
+    }
+
+    execution::allocator_t<ProtoAllocator> property(const execution::allocator_t<ProtoAllocator>&) const
+    {
+      return execution::allocator_t<ProtoAllocator>{allocator_};
+    }
+
     bool running_in_this_thread() const noexcept { return pool_->running_in_this_thread(); }
 
     static_thread_pool& context() const noexcept { return *pool_; }

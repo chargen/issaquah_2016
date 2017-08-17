@@ -197,6 +197,24 @@ void static_thread_pool_bulk_twoway_executor_compile_test(Executor ex1)
   static_thread_pool_bulk_twoway_executor_compile_test(cex1.prefer(execution::allocator(std::allocator<void>())));
 }
 
+template<class Executor, class Property>
+void static_thread_pool_executor_property_compile_test(const Executor& cex1, const Property& p1)
+{
+  Property p2{cex1.property(p1)};
+  static_assert(std::is_same<Property, decltype(p2)>::value, "property() must return same type");
+
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::never_blocking), execution::never_blocking);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::possibly_blocking), execution::possibly_blocking);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::always_blocking), execution::always_blocking);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::continuation), execution::continuation);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::not_continuation), execution::not_continuation);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::outstanding_work), execution::outstanding_work);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::not_outstanding_work), execution::not_outstanding_work);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::bulk_parallel_execution), execution::bulk_parallel_execution);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::thread_execution_mapping), execution::thread_execution_mapping);
+  static_thread_pool_executor_property_compile_test(cex1.require(execution::allocator(std::allocator<void>())), execution::allocator(std::allocator<void>()));
+}
+
 void static_thread_pool_compile_test()
 {
   using executor_type = static_thread_pool::executor_type;
@@ -233,6 +251,7 @@ void static_thread_pool_compile_test()
   static_thread_pool_bulk_oneway_executor_compile_test(pool1.executor().require(execution::bulk));
   static_thread_pool_bulk_twoway_executor_compile_test(pool1.executor());
   static_thread_pool_bulk_twoway_executor_compile_test(pool1.executor().require(execution::bulk));
+  static_thread_pool_executor_property_compile_test(pool1.executor(), execution::oneway);
 }
 
 int main()

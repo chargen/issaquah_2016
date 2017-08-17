@@ -48,6 +48,9 @@ public:
   template <class Property> auto prefer(const Property& p) &&
     -> logging_executor<execution::prefer_member_result_t<InnerExecutor, Property>>
       { return { *prefix_, std::move(inner_ex_).prefer(p) }; }
+  template <class Property> auto property(const Property& p) const
+    -> decltype(inner_declval<Property>.property(p))
+      { return inner_ex_.property(p); }
 
   auto& context() const noexcept { return inner_ex_.context(); }
 

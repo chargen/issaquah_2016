@@ -23,6 +23,8 @@ class strand
   std::shared_ptr<strand_state> state_;
   Executor ex_;
 
+  template <class T> static auto inner_declval() -> decltype(std::declval<Executor>());
+
   strand(std::shared_ptr<strand_state> s, Executor ex)
     : state_(std::move(s)), ex_(std::move(ex))
   {
@@ -105,6 +107,12 @@ public:
   strand prefer(execution::always_blocking_t) const
   {
     return *this;
+  }
+
+  template <class Property> auto property(const Property& p) const
+    -> decltype(inner_declval<Property>.property(p))
+  {
+    return ex_.property(p);
   }
 
   auto& context() const
