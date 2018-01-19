@@ -2,7 +2,8 @@ EXAMPLES = \
   defaulted_1 \
   defaulted_2 \
   defaulted_3 \
-  non_defaulted
+  non_defaulted \
+  nonblocking_oneway_delay
 
 CXXFLAGS = -std=c++14 -pthread -Wall -Wextra -I../../include
 
